@@ -43,7 +43,7 @@ else:
         predicted_date = datetime.now() + timedelta(days=predicted_days)
         st.success(f"The next maintenance will be for the date: : {predicted_date.strftime('%Y-%m-%d')}")
  
-joblib.dump(model, 'model.pkl')
+joblib.dump(model, 'decision_tree_regressor.pkl')
 
-print("Modèle sauvegardé dans model.pkl")
+print("Modèle sauvegardé dans decision_tree_regressor.pkl")
 	
