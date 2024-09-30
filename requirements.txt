@@ -1,7 +1,6 @@
-streamlit
-flask
+fastapi
+uvicorn
+numpy
+pandas
 scikit-learn
 joblib
-pandas
-numpy
-requests
