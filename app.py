@@ -54,8 +54,8 @@ else:
     flow_rate_in = st.number_input('Flow Input', value=0.0)
     flow_rate_out = st.number_input('Flow Output', value=0.0)
     conductivity = st.number_input('Conductivity', value=0.0)
-    api_url = "https://api.github.com/repos/Montassar1997/Predictivedate"
-api_url = "https://api.github.com/repos/Montassar1997/Predictivedate"
+    api_url = "http://127.0.0.1:5000/predict"
+api_url = "http://127.0.0.1:5000/predict"
 
 if st.button('Prédire'):
     # Préparer les données pour l'API
