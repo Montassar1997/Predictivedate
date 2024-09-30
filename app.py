@@ -5,6 +5,23 @@ from sklearn.tree import DecisionTreeRegressor
 from datetime import datetime, timedelta
 import joblib
 import requests
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class PredictionRequest(BaseModel):
+    pressure: float
+    flow_rate_in: float
+    flow_rate_out: float
+    conductivity: float
+
+@app.post("/predict")
+def predict(request: PredictionRequest):
+    # Your prediction logic here
+    predicted_days = ...  # Implement your prediction logic
+    predicted_date = ...  # Calculate the predicted date
+    return {"predicted_days": predicted_days, "predicted_date": str(predicted_date)}
 
 # Load the Decision Tree model
 model = joblib.load('model.pkl')
@@ -60,11 +77,7 @@ if st.button('Prédire'):
 
 
     
-    if st.button('Prédire'):
-        input_data = np.array([[pressure, flow_rate_in, flow_rate_out, conductivity]])
-        predicted_days = model.predict(input_data)[0]
-        predicted_date = datetime.now() + timedelta(days=predicted_days)
-        st.success(f"The next maintenance will be for the date: : {predicted_date.strftime('%Y-%m-%d')}")
+    
  
 joblib.dump(model, 'model.pkl')
 
