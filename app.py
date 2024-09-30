@@ -34,7 +34,7 @@ def predict():
         print(e)
 
 if __name__=='__main__':
-	app.run()
+	app.run(host=https://waterpurification-ifdzpagxj5czfkbl4ksekd.streamlit.app/)
 
 
     
