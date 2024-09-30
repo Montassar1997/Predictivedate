@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.tree import DecisionTreeRegressor
 from datetime import datetime, timedelta
 import joblib
+import requests
 
 # Load the Decision Tree model
 model = joblib.load('model.pkl')
