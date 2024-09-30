@@ -7,8 +7,10 @@ import joblib
 import requests
 from fastapi import FastAPI
 from pydantic import BaseModel
-
+from flask import Flask, jsonify, request
 app = FastAPI()
+app = Flask('__name__')
+
 
 class PredictionRequest(BaseModel):
     pressure: float
