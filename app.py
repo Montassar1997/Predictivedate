@@ -34,12 +34,4 @@ def predict():
         print(e)
 
 if __name__=='__main__':
-	app.run(host='0.0.0.0')
-
-
-    
-    
- 
-joblib.dump(model, 'model.pkl')
-
-print("Modèle sauvegardé dans model.pkl")
+	app.run(port=8080)
