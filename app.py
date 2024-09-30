@@ -1,81 +1,40 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-from sklearn.tree import DecisionTreeRegressor
-from datetime import datetime, timedelta
-import joblib
-import requests
-from fastapi import FastAPI
-from pydantic import BaseModel
 from flask import Flask, jsonify, request
-app = FastAPI()
+# from pydantic import BaseModel
+import numpy as np
+import pandas as pd
+import joblib
+from datetime import datetime, timedelta
+
+# Définir le modèle de données pour les requêtes
+# class PredictionRequest(BaseModel):
+    # pressure: float
+    # flow_rate_in: float
+    # flow_rate_out: float
+    # conductivity: float
+
+# Initialiser l'application FastAPI
 app = Flask('__name__')
 
+# Charger le modèle une seule fois au démarrage
+model = joblib.load('decision_tree_regressor.pkl')
 
-class PredictionRequest(BaseModel):
-    pressure: float
-    flow_rate_in: float
-    flow_rate_out: float
-    conductivity: float
+@app.route("/predict", methods=['POST'])
+def predict():
+    try:
+        # Préparer les données pour la prédiction
+        data=request.json
+        input_data = np.array([[data['pressure'], data['flow_rate_in'], data['flow_rate_out'], data['conductivity']]])
+        days_until_maintenance = model.predict(input_data)[0]
+        date = pd.Timestamp.now() + timedelta(days=days_until_maintenance)
+        # Retourner le résultat en JSON
+        return jsonify({
+            'predicted_date': date,
+        })
+    except Exception as e:
+        print(e)
 
-@app.post("/predict")
-def predict(request: PredictionRequest):
-    # Your prediction logic here
-    predicted_days = ...  # Implement your prediction logic
-    predicted_date = ...  # Calculate the predicted date
-    return {"predicted_days": predicted_days, "predicted_date": str(predicted_date)}
-
-# Load the Decision Tree model
-model = joblib.load('model.pkl')
-
-# Charger les données
-df = pd.read_csv('Base_13.csv')
-df['date'] = pd.to_datetime(df['date'])
-df['Days_Until_Maintenance'] = (df['date'] - pd.Timestamp.now()).dt.days
-
-print("Modèle sauvegardé dans model.pkl")
-# Vérifiez que les colonnes nécessaires existent dans le DataFrame
-# Assurez-vous que les colonnes 'pressure', 'flow_in', 'flow_out', 'conductivity' existent dans le CSV
-required_columns = ['pressure', 'flow_rate_in', 'flow_rate_out', 'conductivity', 'date']
-if not all(col in df.columns for col in required_columns):
-    st.error("Le fichier CSV doit contenir les colonnes : 'pressure', 'flow_rate_in', 'flow_rate_out', 'conductivity' et 'date'.")
-else:
-    # Préparer les données pour l'entraînement
-    X = df[['pressure', 'flow_rate_in', 'flow_rate_out', 'conductivity']]
-    y = df['Days_Until_Maintenance']  # Variable cible
-
-    # Créer et entraîner le modèle
-    model = DecisionTreeRegressor()
-    model.fit(X, y)
-
-    # Interface Streamlit
-    st.title("Simulation of the predictive prediction of the Osmosis system")
-
-    # Entrées utilisateur
-    pressure = st.number_input('Pression', value=0.0)
-    flow_rate_in = st.number_input('Flow Input', value=0.0)
-    flow_rate_out = st.number_input('Flow Output', value=0.0)
-    conductivity = st.number_input('Conductivity', value=0.0)
-    api_url = "http://127.0.0.1:5000/predict"
-api_url = "http://127.0.0.1:5000/predict"
-
-if st.button('Prédire'):
-    # Préparer les données pour l'API
-    data = {
-        "pressure": pressure,
-        "flow_rate_in": flow_rate_in,
-        "flow_rate_out": flow_rate_out,
-        "conductivity": conductivity
-    }
-    
-    # Envoyer une requête POST à l'API
-    response = requests.post(api_url, json=data)
-    
-    if response.status_code == 200:
-        result = response.json()
-        st.success(f"La prochaine maintenance sera le : {result['predicted_date']} (dans {result['predicted_days']} jours)")
-    else:
-        st.error(f"Erreur lors de la prédiction : {response.text}")
+if __name__=='__main__':
+	app.run(port=8080)
 
 
     
