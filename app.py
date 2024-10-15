@@ -32,12 +32,12 @@ else:
     st.title("Simulation of the predictive prediction of the Osmosis system")
 
     # Entrées utilisateur
-    pressure = st.number_input('Pression', value=0.0)
-    flow_rate_in = st.number_input('Flow Input', value=0.0)
-    flow_rate_out = st.number_input('Flow Output', value=0.0)
+    pressure = st.number_input('Pressure', value=0.0)
+    flow_rate_in = st.number_input('Flow rate Input', value=0.0)
+    flow_rate_out = st.number_input('Flow rate Output', value=0.0)
     conductivity = st.number_input('Conductivity', value=0.0)
 
-    if st.button('Prédire'):
+    if st.button('Predict'):
         input_data = np.array([[pressure, flow_rate_in, flow_rate_out, conductivity]])
         predicted_days = model.predict(input_data)[0]
         predicted_date = datetime.now() + timedelta(days=predicted_days)
